@@ -6,16 +6,17 @@
  * Time: 8:26 PM
  */
 
+use KeepToMarkdown\FileHelpers;
 use KeepToMarkdown\KeepJSONMarkdownConverter;
 
-require 'simple-html-dom/simple_html_dom.php';
 require 'vendor/autoload.php';
+
 if (isset($argv) && is_array($argv)) {
     // $argv[0] is the name of the script
     $html_file_path = $argv[1];
 
     if ($html_file_path) {
-        $file_helper = new KeepToMarkdown\FileHelpers();
+        $file_helper = new FileHelpers();
         $html_file_path = $file_helper->trailingslashit($html_file_path);
         if (is_dir($html_file_path)) {
             $files = glob($html_file_path . "*.json");
