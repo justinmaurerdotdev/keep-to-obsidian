@@ -6,7 +6,7 @@
  * Time: 9:19 PM
  */
 
-namespace KeepToMarkdown;
+namespace KeepToObsidian;
 
 use ABGEO\MDGenerator\Document;
 use ABGEO\MDGenerator\Element;

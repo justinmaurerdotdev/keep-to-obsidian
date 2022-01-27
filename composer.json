@@ -1,5 +1,5 @@
 {
-    "name": "justinmaurerdotdev/keep-to-markdown",
+    "name": "justinmaurerdotdev/keep-to-obsidian",
     "description": "Convert Google Keep's HTML files to Markdown for Obsidian",
     "type": "library",
     "require-dev": {
@@ -9,7 +9,7 @@
     "license": "GPL-3.0-only",
     "autoload": {
         "psr-4": {
-            "KeepToMarkdown\\": "src/"
+            "KeepToObsidian\\": "src/"
         }
     },
     "authors": [

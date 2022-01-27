@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f268e3973bd4d1d0b1fa81555c08d5cc",
+    "content-hash": "3b96662706d39fe9c6e71861661b95c3",
     "packages": [
         {
             "name": "abgeo/gen-md",

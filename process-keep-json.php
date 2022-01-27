@@ -6,8 +6,8 @@
  * Time: 8:26 PM
  */
 
-use KeepToMarkdown\FileHelpers;
-use KeepToMarkdown\KeepJSONMarkdownConverter;
+use KeepToObsidian\FileHelpers;
+use KeepToObsidian\KeepJSONMarkdownConverter;
 
 require 'vendor/autoload.php';
 
