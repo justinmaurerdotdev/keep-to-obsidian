@@ -17,3 +17,6 @@ php process-keep-json.php path/to/files/
 
 This will create a directory (if it does not already exist) called `md/` in the directory that you give it. 
 This new directory will be full of Markdown files and can be used as your new Obsidian vault. You will likely want to rename it and move it to your Obsidian directory.
+
+License: *GPL-3.0-only*
+The license can be seen in the LICENSE file.
