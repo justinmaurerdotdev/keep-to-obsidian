@@ -55,6 +55,9 @@ if (isset($argv) && is_array($argv)) {
 										continue;
 									}
 			                    }
+								if ($converter->isArchived) {
+									$dstFilename = KeepJSONMarkdownConverter::ARCHIVE_DIR . $dstFilename;
+								}
 		                        copy($html_file_path . $srcFilename, $html_file_path . 'md/' . $dstFilename);
 		                    }
 	                    }

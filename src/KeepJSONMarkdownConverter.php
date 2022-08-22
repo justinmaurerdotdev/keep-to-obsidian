@@ -22,6 +22,8 @@ use stdClass;
  */
 class KeepJSONMarkdownConverter
 {
+	public const ARCHIVE_DIR = 'archive/';
+
     /**
      * @var string
      */
@@ -223,6 +225,9 @@ class KeepJSONMarkdownConverter
             }
         }
         $this->filename = $slugGenerator->generate($this->title, ['validChars' => 'A-Za-z0-9']) . '.md';
+		if ($this->isArchived) {
+			$this->filename = \KeepToObsidian\KeepJSONMarkdownConverter::ARCHIVE_DIR . $this->filename;
+		}
     }
 
     /**
