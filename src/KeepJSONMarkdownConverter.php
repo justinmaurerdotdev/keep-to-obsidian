@@ -63,6 +63,10 @@ class KeepJSONMarkdownConverter
      */
     public array $annotations;
     /**
+     * @var array
+     */
+    public array $labels;
+    /**
      * @var Document
      */
     public Document $document;
@@ -108,6 +112,9 @@ class KeepJSONMarkdownConverter
         }
         if (property_exists($json_note, 'annotations')) {
             $this->initAnnotations($json_note->annotations);
+        }
+        if (property_exists($json_note, 'labels')) {
+            $this->initLabels($json_note->labels);
         }
 
         $this->processDocumentPieces();
@@ -248,6 +255,18 @@ class KeepJSONMarkdownConverter
     }
 
     /**
+     * @param $labels
+     *
+     * @return void
+     */
+    private function initLabels($labels)
+    {
+        if (is_array($labels)) {
+            $this->labels = $labels;
+        }
+    }
+
+    /**
      * @return void
      */
     private function processDocumentPieces()
@@ -296,5 +315,16 @@ class KeepJSONMarkdownConverter
                 }
             }
         }
+
+		if (isset($this->labels)) {
+			$tags = [];
+			foreach ($this->labels as $label) {
+				$tags[] = '#' . str_replace(' ', '', $label->name);
+			}
+			if ($tags) {
+				$this->document->addElement(Element::createBreak());
+				$this->document->addElement(Element::createParagraph(implode(' ', $tags)));
+			}
+		}
     }
 }
