@@ -19,7 +19,19 @@ if (isset($argv) && is_array($argv)) {
         $file_helper = new FileHelpers();
         $html_file_path = $file_helper->trailingslashit($html_file_path);
         if (is_dir($html_file_path)) {
+	        if (!is_dir($html_file_path . 'md/')) {
+		        mkdir($html_file_path . 'md/');
+	        }
+	        if (!is_dir($html_file_path . 'md/.obsidian')) {
+		        mkdir($html_file_path . 'md/.obsidian');
+	        }
+	        if (!is_dir($html_file_path . 'md/' . KeepJSONMarkdownConverter::ARCHIVE_DIR)) {
+		        mkdir($html_file_path . 'md/' . KeepJSONMarkdownConverter::ARCHIVE_DIR);
+	        }
             $files = glob($html_file_path . "*.json");
+			$starred = [
+				'items' => [],
+			];
             foreach ($files as $file) {
                 $note = file_get_contents($file);
                 $note = json_decode($note);
@@ -30,16 +42,21 @@ if (isset($argv) && is_array($argv)) {
 						if ($converter->isTrashed) {
 							continue;
 						}
-                        if (!is_dir($html_file_path . 'md/')) {
-                            mkdir($html_file_path . 'md/');
-                        }
                         file_put_contents($html_file_path . 'md/' . $converter->filename, $converter->document);
+	                    if ($converter->isPinned) {
+		                    $starred['items'][] = [
+			                    'type'  => 'file',
+			                    'title' => $converter->title,
+			                    'path'  => $converter->filename,
+		                    ];
+	                    }
                     } catch (Exception $e) {
                         echo $e->getMessage();
                         echo 'File: ' . $file;
                     }
                 }
             }
+	        file_put_contents($html_file_path . 'md/.obsidian/starred.json', json_encode($starred, JSON_PRETTY_PRINT));
         }
     }
     exit('All done');
