@@ -67,6 +67,14 @@ class KeepJSONMarkdownConverter
      */
     public array $labels;
     /**
+     * @var array
+     */
+    public array $attachments;
+	/**
+	 * @var string[]
+	 */
+	public array $attachmentsToCopy;
+    /**
      * @var Document
      */
     public Document $document;
@@ -115,6 +123,9 @@ class KeepJSONMarkdownConverter
         }
         if (property_exists($json_note, 'labels')) {
             $this->initLabels($json_note->labels);
+        }
+        if (property_exists($json_note, 'attachments')) {
+            $this->initAttachments($json_note->attachments);
         }
 
         $this->processDocumentPieces();
@@ -267,6 +278,18 @@ class KeepJSONMarkdownConverter
     }
 
     /**
+     * @param $attachments
+     *
+     * @return void
+     */
+    private function initAttachments($attachments)
+    {
+        if (is_array($attachments)) {
+            $this->attachments = $attachments;
+        }
+    }
+
+    /**
      * @return void
      */
     private function processDocumentPieces()
@@ -301,6 +324,20 @@ class KeepJSONMarkdownConverter
             }
             $this->document->addElement(Element::createList($list));
         }
+
+		if (isset($this->attachments)) {
+			$new_lines = [];
+			foreach($this->attachments as $attachment) {
+				if (strpos($attachment->mimetype, 'image/') === 0) {
+					$title = basename($attachment->filePath);
+					$new_lines[] = Element::createImage($attachment->filePath, $title, $title);
+					$this->attachmentsToCopy[] = $attachment->filePath;
+				} else {
+					throw new \RuntimeException('Unknown mimetype:' . $attachment->mimetype);
+				}
+			}
+			$this->document->addElement(Element::concatenateElements(...$new_lines));
+		}
 
         if (isset($this->annotations)) {
             foreach ($this->annotations as $annotation) {

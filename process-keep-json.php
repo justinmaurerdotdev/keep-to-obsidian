@@ -43,6 +43,21 @@ if (isset($argv) && is_array($argv)) {
 							continue;
 						}
                         file_put_contents($html_file_path . 'md/' . $converter->filename, $converter->document);
+	                    if (isset($converter->attachmentsToCopy)) {
+		                    foreach ($converter->attachmentsToCopy as $srcFilename) {
+								$dstFilename = $srcFilename;
+			                    if (!file_exists($html_file_path . $dstFilename)) {
+									// bug in Google Takeout? Some attachments seem to have the wrong extension
+				                    $srcFilename = str_replace('.jpeg', '.jpg', $srcFilename);
+									if (!file_exists($html_file_path . $srcFilename)) {
+										echo $converter->title . ': attachment not found: ' . $html_file_path .
+											$dstFilename . PHP_EOL;
+										continue;
+									}
+			                    }
+		                        copy($html_file_path . $srcFilename, $html_file_path . 'md/' . $dstFilename);
+		                    }
+	                    }
 	                    if ($converter->isPinned) {
 		                    $starred['items'][] = [
 			                    'type'  => 'file',
