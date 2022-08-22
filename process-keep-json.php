@@ -27,6 +27,9 @@ if (isset($argv) && is_array($argv)) {
                 if ($note instanceof stdClass) {
                     try {
                         $converter = new KeepJSONMarkdownConverter($note);
+						if ($converter->isTrashed) {
+							continue;
+						}
                         if (!is_dir($html_file_path . 'md/')) {
                             mkdir($html_file_path . 'md/');
                         }
