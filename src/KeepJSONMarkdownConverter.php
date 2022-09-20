@@ -65,7 +65,7 @@ class KeepJSONMarkdownConverter
      */
     public array $annotations;
     /**
-     * @var array
+     * @var string[]
      */
     public array $labels;
     /**
@@ -276,7 +276,9 @@ class KeepJSONMarkdownConverter
     private function initLabels($labels): void
     {
         if (is_array($labels)) {
-            $this->labels = $labels;
+			$this->labels = array_map(static function ($label) {
+				return $label->name;
+			}, $labels);
         }
     }
 
@@ -356,15 +358,15 @@ class KeepJSONMarkdownConverter
             }
         }
 
-		if (isset($this->labels)) {
-			$tags = [];
-			foreach ($this->labels as $label) {
-				$tags[] = '#' . str_replace(' ', '', $label->name);
-			}
-			if ($tags) {
-				$this->document->addElement(Element::createBreak());
-				$this->document->addElement(Element::createParagraph(implode(' ', $tags)));
-			}
+		if (!isset($this->labels)) {
+			$this->labels = ['nolabel'];
+		}
+		$tags = array_map(static function (string $label) {
+			return '#' . str_replace(' ', '', $label);
+		}, $this->labels);
+		if ($tags) {
+			$this->document->addElement(Element::createBreak());
+			$this->document->addElement(Element::createParagraph(implode(' ', $tags)));
 		}
     }
 }
