@@ -22,7 +22,8 @@ use stdClass;
  */
 class KeepJSONMarkdownConverter
 {
-	public const ARCHIVE_DIR = 'archive/';
+	public const ARCHIVE_DIR = 'Archive/';
+	public const ATTACHMENT_DIR = 'Attachments/';
 
     /**
      * @var string
@@ -75,7 +76,7 @@ class KeepJSONMarkdownConverter
 	/**
 	 * @var string[]
 	 */
-	public array $attachmentsToCopy;
+	public array $attachmentsToCopy = [];
     /**
      * @var Document
      */
@@ -334,10 +335,12 @@ class KeepJSONMarkdownConverter
 			$new_lines = [];
 			foreach($this->attachments as $attachment) {
 				if (strpos($attachment->mimetype, 'image/') === 0) {
-					$title = basename($attachment->filePath);
-					$new_lines[] = Element::createImage($attachment->filePath, $title, $title);
+					$basename = basename($attachment->filePath);
+					$dstFilename = ($this->isArchived ? '../' : '') . self::ATTACHMENT_DIR . $basename;
+					$new_lines[] = Element::createImage($dstFilename, $basename, $basename);
 					$this->attachmentsToCopy[] = $attachment->filePath;
 				} else {
+					// No support for recorded audio yet
 					throw new \RuntimeException('Unknown mimetype:' . $attachment->mimetype);
 				}
 			}
@@ -369,4 +372,30 @@ class KeepJSONMarkdownConverter
 			$this->document->addElement(Element::createParagraph(implode(' ', $tags)));
 		}
     }
+
+	/**
+	 * @param string $basePath
+	 * @return string[][]
+	 */
+	public function getFilesToCopy(string $basePath): array {
+		$result = [];
+		foreach ($this->attachmentsToCopy as $srcFilename) {
+			$dstFilename = $srcFilename;
+			if (!file_exists($basePath . $srcFilename)) {
+				// bug in Google Takeout? Some attachments seem to have the wrong extension
+				$srcFilename = str_replace('.jpeg', '.jpg', $srcFilename);
+				if (!file_exists($basePath . $srcFilename)) {
+					echo $this->title . ': attachment not found: ' . $basePath .
+						$dstFilename . PHP_EOL;
+					continue;
+				}
+			}
+			$result[] = [
+				$srcFilename,
+				self::ATTACHMENT_DIR . basename($dstFilename),
+			];
+		}
+
+		return $result;
+	}
 }

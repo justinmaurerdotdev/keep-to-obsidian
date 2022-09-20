@@ -16,15 +16,16 @@ if (!isset($argv) || !is_array($argv) || count($argv) < 2) {
 }
 
 // $argv[0] is the name of the script
-$html_file_path = $argv[1];
+$sourcePath = $argv[1];
 
 $file_helper = new FileHelpers();
-$html_file_path = $file_helper->trailingSlashIt($html_file_path);
-if (is_dir($html_file_path)) {
-	$file_helper->assertDirectoryExists($html_file_path . 'md/');
-	$file_helper->assertDirectoryExists($html_file_path . 'md/.obsidian');
-	$file_helper->assertDirectoryExists($html_file_path . 'md/' . KeepJSONMarkdownConverter::ARCHIVE_DIR);
-	$files = glob($html_file_path . "*.json");
+$sourcePath = $file_helper->trailingSlashIt($sourcePath);
+if (is_dir($sourcePath)) {
+	$file_helper->assertDirectoryExists($sourcePath . 'md/');
+	$file_helper->assertDirectoryExists($sourcePath . 'md/.obsidian');
+	$file_helper->assertDirectoryExists($sourcePath . 'md/' . KeepJSONMarkdownConverter::ARCHIVE_DIR);
+	$file_helper->assertDirectoryExists($sourcePath . 'md/' . KeepJSONMarkdownConverter::ATTACHMENT_DIR);
+	$files = glob($sourcePath . "*.json");
 	$starred = [
 		'items' => [],
 	];
@@ -38,24 +39,12 @@ if (is_dir($html_file_path)) {
 				if ($converter->isTrashed) {
 					continue;
 				}
-				file_put_contents($html_file_path . 'md/' . $converter->filename, $converter->document);
-				if (isset($converter->attachmentsToCopy)) {
-					foreach ($converter->attachmentsToCopy as $srcFilename) {
-						$dstFilename = $srcFilename;
-						if (!file_exists($html_file_path . $dstFilename)) {
-							// bug in Google Takeout? Some attachments seem to have the wrong extension
-							$srcFilename = str_replace('.jpeg', '.jpg', $srcFilename);
-							if (!file_exists($html_file_path . $srcFilename)) {
-								echo $converter->title . ': attachment not found: ' . $html_file_path .
-									$dstFilename . PHP_EOL;
-								continue;
-							}
-						}
-						if ($converter->isArchived) {
-							$dstFilename = KeepJSONMarkdownConverter::ARCHIVE_DIR . $dstFilename;
-						}
-						copy($html_file_path . $srcFilename, $html_file_path . 'md/' . $dstFilename);
-					}
+				file_put_contents($sourcePath . 'md/' . $converter->filename, $converter->document);
+				foreach ($converter->getFilesToCopy($sourcePath) as [$srcFilename, $dstFilename]) {
+					copy(
+						$sourcePath . $srcFilename,
+						$sourcePath . 'md/' . $dstFilename
+					);
 				}
 				if ($converter->isPinned) {
 					$starred['items'][] = [
@@ -71,7 +60,7 @@ if (is_dir($html_file_path)) {
 		}
 	}
 	file_put_contents(
-		$html_file_path . 'md/.obsidian/starred.json',
+		$sourcePath . 'md/.obsidian/starred.json',
 		json_encode($starred, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
 	);
 }

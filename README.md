@@ -18,7 +18,8 @@ php process-keep-json.php path/to/files/
 This will create a directory (if it does not already exist) called `md/` in the directory that you give it. 
 This new directory will be full of Markdown files and can be used as your new Obsidian vault. You will likely want to rename it and move it to your Obsidian directory.
 
-Archived notes will be placed in the `md/archive/` subdirectory.
+Archived notes will be placed in the `md/Archive/` subdirectory.
+Attachments from notes will be placed in the `md/Attachments/` subdirectory.
 Pinned notes will be converted into starred notes.
 Labels in Keep will be added as tags in MarkDown.
 
