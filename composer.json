@@ -2,16 +2,7 @@
     "name": "justinmaurerdotdev/keep-to-obsidian",
     "description": "Convert Google Keep's HTML files to Markdown for Obsidian",
     "type": "library",
-    "require-dev": {
-        "phpunit/phpunit": "^9.5",
-        "squizlabs/php_codesniffer": "^3.6"
-    },
     "license": "GPL-3.0-only",
-    "autoload": {
-        "psr-4": {
-            "KeepToObsidian\\": "src/"
-        }
-    },
     "authors": [
         {
             "name": "Justin Maurer",
@@ -19,7 +10,18 @@
         }
     ],
     "require": {
+        "php": "^7.4",
+        "ext-json": "*",
         "abgeo/gen-md": "^0.9.0",
         "ausi/slug-generator": "^1.1"
+    },
+    "require-dev": {
+      "phpunit/phpunit": "^9.5",
+      "squizlabs/php_codesniffer": "^3.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "KeepToObsidian\\": "src/"
+        }
     }
 }
