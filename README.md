@@ -30,7 +30,6 @@ in Keep are being converted.
 
 Not all properties of a note in Keep will be converted. These are:
 
-- color
 - createdTimestampUsec
 - userEditedTimestampUsec
 
