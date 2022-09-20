@@ -138,7 +138,7 @@ class KeepJSONMarkdownConverter
      *
      * @return void
      */
-    private function initColor($color)
+    private function initColor($color): void
     {
         if (is_string($color)) {
             $this->color = $color;
@@ -150,7 +150,7 @@ class KeepJSONMarkdownConverter
      *
      * @return void
      */
-    private function initIsTrashed($isTrashed)
+    private function initIsTrashed($isTrashed): void
     {
         if (is_bool($isTrashed)) {
             $this->isTrashed = $isTrashed;
@@ -162,7 +162,7 @@ class KeepJSONMarkdownConverter
      *
      * @return void
      */
-    private function initIsPinned($isPinned)
+    private function initIsPinned($isPinned): void
     {
         if (is_bool($isPinned)) {
             $this->isPinned = $isPinned;
@@ -174,7 +174,7 @@ class KeepJSONMarkdownConverter
      *
      * @return void
      */
-    private function initIsArchived($isArchived)
+    private function initIsArchived($isArchived): void
     {
         if (is_bool($isArchived)) {
             $this->isArchived = $isArchived;
@@ -186,7 +186,7 @@ class KeepJSONMarkdownConverter
      *
      * @return void
      */
-    private function initTextContent($textContent)
+    private function initTextContent($textContent): void
     {
         if (is_string($textContent)) {
             $this->textContent = $textContent;
@@ -198,7 +198,7 @@ class KeepJSONMarkdownConverter
      *
      * @return void
      */
-    private function initListContent($listContent)
+    private function initListContent($listContent): void
     {
         if (is_array($listContent)) {
             $this->listContent = $listContent;
@@ -208,7 +208,7 @@ class KeepJSONMarkdownConverter
     /**
      * @throws Exception
      */
-    private function initTitle($title)
+    private function initTitle($title): void
     {
         if (is_string($title) && $title) {
             echo $title . "\r\n";
@@ -216,17 +216,15 @@ class KeepJSONMarkdownConverter
             $slugGenerator = new SlugGenerator((new SlugOptions())
                 ->setDelimiter(' ')
                 ->setValidChars('a-zA-Z0-9'));
-        } else {
-            if (isset($this->createdTime)) {
-                $this->title = $this->createdTime->format('Y-m-d-h-i-s');
-                $slugGenerator = new SlugGenerator((new SlugOptions())->setDelimiter('-'));
-            } else {
-                throw new Exception("No usable title can be derived from this note.");
-            }
-        }
+        } else if (isset($this->createdTime)) {
+			$this->title = $this->createdTime->format('Y-m-d-h-i-s');
+			$slugGenerator = new SlugGenerator((new SlugOptions())->setDelimiter('-'));
+		} else {
+			throw new \RuntimeException("No usable title can be derived from this note.");
+		}
         $this->filename = $slugGenerator->generate($this->title, ['validChars' => 'A-Za-z0-9']) . '.md';
 		if ($this->isArchived) {
-			$this->filename = \KeepToObsidian\KeepJSONMarkdownConverter::ARCHIVE_DIR . $this->filename;
+			$this->filename = self::ARCHIVE_DIR . $this->filename;
 		}
     }
 
@@ -235,7 +233,7 @@ class KeepJSONMarkdownConverter
      *
      * @return void
      */
-    private function initUserEditedTimestampUsec($userEditedTimestampUsec)
+    private function initUserEditedTimestampUsec($userEditedTimestampUsec): void
     {
         if (is_int($userEditedTimestampUsec)) {
             // divide by one million because these are microseconds and unix time uses seconds
@@ -249,7 +247,7 @@ class KeepJSONMarkdownConverter
      *
      * @return void
      */
-    private function initCreatedTimestampUsec($createdTimestampUsec)
+    private function initCreatedTimestampUsec($createdTimestampUsec): void
     {
         if (is_int($createdTimestampUsec)) {
             // divide by one million because these are microseconds and unix time uses seconds
@@ -263,7 +261,7 @@ class KeepJSONMarkdownConverter
      *
      * @return void
      */
-    private function initAnnotations($annotations)
+    private function initAnnotations($annotations): void
     {
         if (is_array($annotations)) {
             $this->annotations = $annotations;
@@ -275,7 +273,7 @@ class KeepJSONMarkdownConverter
      *
      * @return void
      */
-    private function initLabels($labels)
+    private function initLabels($labels): void
     {
         if (is_array($labels)) {
             $this->labels = $labels;
@@ -287,7 +285,7 @@ class KeepJSONMarkdownConverter
      *
      * @return void
      */
-    private function initAttachments($attachments)
+    private function initAttachments($attachments): void
     {
         if (is_array($attachments)) {
             $this->attachments = $attachments;
@@ -297,7 +295,7 @@ class KeepJSONMarkdownConverter
     /**
      * @return void
      */
-    private function processDocumentPieces()
+    private function processDocumentPieces(): void
     {
         if (isset($this->title)) {
             $this->document->addElement(Element::createHeading($this->title, '1'));
@@ -350,7 +348,7 @@ class KeepJSONMarkdownConverter
                     $new_lines = [];
                     $new_lines[] = Element::createBold("[$annotation->title]($annotation->url)");
                     $new_lines[] = Element::createBreak();
-                    $new_lines[] = Element::createBold("$annotation->description");
+                    $new_lines[] = Element::createBold((string)$annotation->description);
                     $new_lines[] = Element::createBreak();
                     $new_lines[] = Element::createBreak();
                     $this->document->addElement(Element::concatenateElements(...$new_lines));
