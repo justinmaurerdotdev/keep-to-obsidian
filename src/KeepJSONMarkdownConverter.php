@@ -353,7 +353,7 @@ class KeepJSONMarkdownConverter {
         if (!isset($this->labels)) {
             $this->labels = ['nolabel'];
         }
-        if (isset($this->color)) {
+        if (isset($this->color) && $this->color !== 'DEFAULT') {
             $this->labels[] = $this->color;
         }
         $tags = array_map(static function (string $label) {
