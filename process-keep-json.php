@@ -18,13 +18,13 @@ if (!isset($argv) || !is_array($argv) || count($argv) < 2) {
 // $argv[0] is the name of the script
 $sourcePath = $argv[1];
 
-$file_helper = new FileHelpers();
-$sourcePath = $file_helper->trailingSlashIt($sourcePath);
+$sourcePath = FileHelpers::trailingSlashIt($sourcePath);
+
 if (is_dir($sourcePath)) {
-	$file_helper->assertDirectoryExists($sourcePath . 'md/');
-	$file_helper->assertDirectoryExists($sourcePath . 'md/.obsidian');
-	$file_helper->assertDirectoryExists($sourcePath . 'md/' . KeepJSONMarkdownConverter::ARCHIVE_DIR);
-	$file_helper->assertDirectoryExists($sourcePath . 'md/' . KeepJSONMarkdownConverter::ATTACHMENT_DIR);
+	FileHelpers::assertDirectoryExists($sourcePath . 'md/');
+	FileHelpers::assertDirectoryExists($sourcePath . 'md/.obsidian');
+	FileHelpers::assertDirectoryExists($sourcePath . 'md/' . KeepJSONMarkdownConverter::ARCHIVE_DIR);
+	FileHelpers::assertDirectoryExists($sourcePath . 'md/' . KeepJSONMarkdownConverter::ATTACHMENT_DIR);
 	$files = glob($sourcePath . "*.json");
 	$starred = [
 		'items' => [],
