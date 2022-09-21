@@ -8,6 +8,7 @@
 
 use KeepToObsidian\FileHelpers;
 use KeepToObsidian\KeepJSONMarkdownConverter;
+use KeepToObsidian\Starred;
 
 require 'vendor/autoload.php';
 
@@ -19,6 +20,7 @@ if (!isset($argv) || !is_array($argv) || count($argv) < 2) {
 $sourcePath = $argv[1];
 
 $sourcePath = FileHelpers::trailingSlashIt($sourcePath);
+$starred = new Starred();
 
 if (is_dir($sourcePath)) {
 	FileHelpers::assertDirectoryExists($sourcePath . 'md/');
@@ -26,9 +28,6 @@ if (is_dir($sourcePath)) {
 	FileHelpers::assertDirectoryExists($sourcePath . 'md/' . KeepJSONMarkdownConverter::ARCHIVE_DIR);
 	FileHelpers::assertDirectoryExists($sourcePath . 'md/' . KeepJSONMarkdownConverter::ATTACHMENT_DIR);
 	$files = glob($sourcePath . "*.json");
-	$starred = [
-		'items' => [],
-	];
 	foreach ($files as $file) {
 		$note = file_get_contents($file);
 		$note = json_decode($note, false, 512, JSON_THROW_ON_ERROR);
@@ -47,11 +46,7 @@ if (is_dir($sourcePath)) {
 					);
 				}
 				if ($converter->isPinned) {
-					$starred['items'][] = [
-						'type'  => 'file',
-						'title' => $converter->title,
-						'path'  => $converter->filename,
-					];
+					$starred->addNote($converter);
 				}
 			} catch (Exception $e) {
 				echo $e->getMessage();
@@ -59,9 +54,7 @@ if (is_dir($sourcePath)) {
 			}
 		}
 	}
-	file_put_contents(
-		$sourcePath . 'md/.obsidian/starred.json',
-		json_encode($starred, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
-	);
+
+	$starred->write($sourcePath . 'md/');
 }
 exit('All done');
