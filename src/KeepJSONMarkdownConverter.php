@@ -119,7 +119,7 @@ class KeepJSONMarkdownConverter
             $this->initCreatedTimestampUsec($json_note->createdTimestampUsec);
         }
         if (property_exists($json_note, 'title')) {
-            $this->initTitle($json_note->title);
+            $this->initTitle($json_note);
         }
         if (property_exists($json_note, 'annotations')) {
             $this->initAnnotations($json_note->annotations);
@@ -209,15 +209,17 @@ class KeepJSONMarkdownConverter
     /**
      * @throws Exception
      */
-    private function initTitle($title): void
+    private function initTitle(\stdClass $json_note): void
     {
-        if (is_string($title) && $title) {
-            echo $title . "\r\n";
-            $this->title = $title;
-            $slugGenerator = new SlugGenerator((new SlugOptions())
-                ->setDelimiter(' ')
-                ->setValidChars('a-zA-Z0-9'));
-        } else if (isset($this->createdTime)) {
+		$slugGenerator = new SlugGenerator((new SlugOptions())
+			->setDelimiter(' ')
+			->setValidChars('a-zA-Z0-9'));
+        if (is_string($json_note->title) && $json_note->title) {
+			echo $json_note->title . "\r\n";
+			$this->title = $json_note->title;
+		} elseif (isset($json_note->annotations) && count($json_note->annotations) === 1 && $json_note->textContent === $json_note->annotations[0]->url) {
+			$this->title = $json_note->annotations[0]->title;
+        } elseif (isset($this->createdTime)) {
 			$this->title = $this->createdTime->format('Y-m-d-h-i-s');
 			$slugGenerator = new SlugGenerator((new SlugOptions())->setDelimiter('-'));
 		} else {
