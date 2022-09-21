@@ -8,6 +8,7 @@
 
 use KeepToObsidian\FileHelpers;
 use KeepToObsidian\KeepJSONMarkdownConverter;
+use KeepToObsidian\MocList;
 use KeepToObsidian\Starred;
 
 require 'vendor/autoload.php';
@@ -20,6 +21,7 @@ if (!isset($argv) || !is_array($argv) || count($argv) < 2) {
 $sourcePath = $argv[1];
 
 $sourcePath = FileHelpers::trailingSlashIt($sourcePath);
+$mocList = new MocList();
 $starred = new Starred();
 
 if (is_dir($sourcePath)) {
@@ -48,6 +50,7 @@ if (is_dir($sourcePath)) {
 				if ($converter->isPinned) {
 					$starred->addNote($converter);
 				}
+				$mocList->addNote($converter);
 			} catch (Exception $e) {
 				echo $e->getMessage();
 				echo 'File: ' . $file;
@@ -56,5 +59,6 @@ if (is_dir($sourcePath)) {
 	}
 
 	$starred->write($sourcePath . 'md/');
+	$mocList->writeAll($sourcePath . 'md/');
 }
 exit('All done');
