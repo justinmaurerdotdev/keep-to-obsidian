@@ -20,7 +20,8 @@ use stdClass;
  * Takes a Google Keep note in .json form and makes a
  * ABGEO\MDGenerator\Document ($this->document) that can be used as a string.
  */
-class KeepJSONMarkdownConverter {
+class KeepJSONMarkdownConverter
+{
     public const ARCHIVE_DIR = 'Archive/';
     public const ATTACHMENT_DIR = 'Attachments/';
 
@@ -90,7 +91,8 @@ class KeepJSONMarkdownConverter {
      *
      * @throws Exception
      */
-    public function __construct(stdClass $json_note) {
+    public function __construct(stdClass $json_note)
+    {
         $this->document = new Document();
         if (property_exists($json_note, 'color')) {
             $this->initColor($json_note->color);
@@ -137,7 +139,8 @@ class KeepJSONMarkdownConverter {
      *
      * @return void
      */
-    private function initColor($color): void {
+    private function initColor($color): void
+    {
         if (is_string($color)) {
             $this->color = $color;
         }
@@ -148,7 +151,8 @@ class KeepJSONMarkdownConverter {
      *
      * @return void
      */
-    private function initIsTrashed($isTrashed): void {
+    private function initIsTrashed($isTrashed): void
+    {
         if (is_bool($isTrashed)) {
             $this->isTrashed = $isTrashed;
         }
@@ -159,7 +163,8 @@ class KeepJSONMarkdownConverter {
      *
      * @return void
      */
-    private function initIsPinned($isPinned): void {
+    private function initIsPinned($isPinned): void
+    {
         if (is_bool($isPinned)) {
             $this->isPinned = $isPinned;
         }
@@ -170,7 +175,8 @@ class KeepJSONMarkdownConverter {
      *
      * @return void
      */
-    private function initIsArchived($isArchived): void {
+    private function initIsArchived($isArchived): void
+    {
         if (is_bool($isArchived)) {
             $this->isArchived = $isArchived;
         }
@@ -181,7 +187,8 @@ class KeepJSONMarkdownConverter {
      *
      * @return void
      */
-    private function initTextContent($textContent): void {
+    private function initTextContent($textContent): void
+    {
         if (is_string($textContent)) {
             $this->textContent = $textContent;
         }
@@ -192,7 +199,8 @@ class KeepJSONMarkdownConverter {
      *
      * @return void
      */
-    private function initListContent($listContent): void {
+    private function initListContent($listContent): void
+    {
         if (is_array($listContent)) {
             $this->listContent = $listContent;
         }
@@ -201,16 +209,19 @@ class KeepJSONMarkdownConverter {
     /**
      * @throws Exception
      */
-    private function initTitle(\stdClass $json_note): void {
+    private function initTitle(\stdClass $json_note): void
+    {
         $slugGenerator = new SlugGenerator((new SlugOptions())
             ->setDelimiter(' ')
             ->setValidChars('a-zA-Z0-9'));
         if (is_string($json_note->title) && $json_note->title) {
             echo $json_note->title . "\r\n";
             $this->title = $json_note->title;
-        } elseif (isset($json_note->annotations)
+        } elseif (
+            isset($json_note->annotations)
             && count($json_note->annotations) === 1
-            && $json_note->textContent === $json_note->annotations[0]->url) {
+            && $json_note->textContent === $json_note->annotations[0]->url
+        ) {
             $this->title = $json_note->annotations[0]->title;
         } elseif (isset($this->createdTime)) {
             $this->title = $this->createdTime->format('Y-m-d-h-i-s');
@@ -229,7 +240,8 @@ class KeepJSONMarkdownConverter {
      *
      * @return void
      */
-    private function initUserEditedTimestampUsec($userEditedTimestampUsec): void {
+    private function initUserEditedTimestampUsec($userEditedTimestampUsec): void
+    {
         if (is_int($userEditedTimestampUsec)) {
             // divide by one million because these are microseconds and unix time uses seconds
             $unixTime = (int)($userEditedTimestampUsec / 1000000);
@@ -242,7 +254,8 @@ class KeepJSONMarkdownConverter {
      *
      * @return void
      */
-    private function initCreatedTimestampUsec($createdTimestampUsec): void {
+    private function initCreatedTimestampUsec($createdTimestampUsec): void
+    {
         if (is_int($createdTimestampUsec)) {
             // divide by one million because these are microseconds and unix time uses seconds
             $unixTime = (int)($createdTimestampUsec / 1000000);
@@ -255,7 +268,8 @@ class KeepJSONMarkdownConverter {
      *
      * @return void
      */
-    private function initAnnotations($annotations): void {
+    private function initAnnotations($annotations): void
+    {
         if (is_array($annotations)) {
             $this->annotations = $annotations;
         }
@@ -266,7 +280,8 @@ class KeepJSONMarkdownConverter {
      *
      * @return void
      */
-    private function initLabels($labels): void {
+    private function initLabels($labels): void
+    {
         if (is_array($labels)) {
             $this->labels = array_map(static function ($label) {
                 return $label->name;
@@ -279,7 +294,8 @@ class KeepJSONMarkdownConverter {
      *
      * @return void
      */
-    private function initAttachments($attachments): void {
+    private function initAttachments($attachments): void
+    {
         if (is_array($attachments)) {
             $this->attachments = $attachments;
         }
@@ -288,7 +304,8 @@ class KeepJSONMarkdownConverter {
     /**
      * @return void
      */
-    private function processDocumentPieces(): void {
+    private function processDocumentPieces(): void
+    {
         if (isset($this->title)) {
             $this->document->addElement(Element::createHeading($this->title, '1'));
             $this->document->addElement(Element::createBreak());
@@ -369,7 +386,8 @@ class KeepJSONMarkdownConverter {
      * @param string $basePath
      * @return string[][]
      */
-    public function getFilesToCopy(string $basePath): array {
+    public function getFilesToCopy(string $basePath): array
+    {
         $result = [];
         foreach ($this->attachmentsToCopy as $srcFilename) {
             $dstFilename = $srcFilename;

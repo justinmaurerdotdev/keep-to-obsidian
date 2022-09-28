@@ -1,14 +1,6 @@
-
-Archived notice: this repository has been archived, as my migration has been completed.
-This fork was only meant for my personal use case, e.g. I will not further develop this.
-
-Many thanks to Justin Maurer for the original development. It helped me a lot!
-
-------
-
 # Keep to Obsidian
 
-This is a PHP-based tool to convert Google Keep notes to Obsidian notes. It assumes that you have PHP 7.4+ and [Composer](https://getcomposer.org/) installed and working.
+This is a PHP-based tool to convert Google Keep notes to Obsidian-compatible Markdown notes. It assumes that you have PHP 7.4+ and [Composer](https://getcomposer.org/) installed and working.
 
 It assumes that you have downloaded the backups of your Keep data from [Google Takeout](https://takeout.google.com/).
 
